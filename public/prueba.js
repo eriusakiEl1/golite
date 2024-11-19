@@ -1,8 +1,5 @@
-import { Editor } from '@monaco-editor/react';
-import { useState, useRef } from 'react';
-import './App.css';
+const fs = require('fs');
 
-// Clase Automata
 class Automata {
     constructor(matriz) {
         this.matriz = matriz;
@@ -49,7 +46,8 @@ class Automata {
         }
     }
     procesarCaracter(carac) {
-        if (this.currentSt === 0) this.cadena = "";
+        if (this.currentSt === 0)
+            this.cadena = "";
         this.cadena += carac;
         carac = carac.toUpperCase();
         this.varCarac = this.getValorCarac(carac);
@@ -60,95 +58,53 @@ class Automata {
         }
         this.realizarAccion();
     }
+
     realizarAccion() {
         switch (this.currentSt) {
             case 4:
-                console.log(this.cadena + " Constante Númerica");
+                console.log(this.cadena + "Constante Númerica");
                 this.currentSt = 0;
                 break;
             case 6:
-                console.log(this.cadena + " Cadena numérica NO válida");
+                console.log(this.cadena + "Cadena numérica NO válida");
                 this.currentSt = 0;
                 break;
             case 8:
-                console.log(this.cadena + " Cadena inválida");
+                console.log(this.cadena + "Cadena inválida");
                 this.currentSt = 0;
                 break;
             case 14:
-                console.log(this.cadena + " Token");
+                console.log(this.cadena + "Token");
                 this.currentSt = 0;
                 break;
             case 18:
-                console.log(this.cadena + " Identificador");
+                console.log(this.cadena + "Identificador");
                 this.currentSt = 0;
                 break;
         }
     }
 }
-
-// Función para cargar datos desde un recurso estático
-async function leerArchivo(ruta) {
-    const response = await fetch(ruta);
-    if (!response.ok) {
-        throw new Error(`Error al cargar el archivo: ${ruta}`);
-    }
-    return await response.text();
+function leerArchivo(ruta) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(ruta, 'utf8', (error, datos) => {
+            if (error)
+                reject(error);
+            else
+                resolve(datos);
+        });
+    });
 }
 
-// Ejecutar Automata
-async function ejecutarAutomata(code) {
+async function ejecutarAutomata() {
     try {
-        // Cargar la matriz desde un recurso estático
-        const datosMatriz = await leerArchivo('/matriz.txt');
+        const datosMatriz = await leerArchivo('matriz.txt');
         const lineas = datosMatriz.split('\n');
         const matriz = lineas.map(linea => linea.split('\t').map(Number));
-
-        // Crear instancia del autómata
+        const datosPrueba = await leerArchivo('prueba.txt');
         const automata = new Automata(matriz);
-
-        // Procesar cada carácter del código ingresado en el editor
-        for (let meter = 0; meter < code.length; meter++) {
-            automata.procesarCaracter(code[meter]);
-        }
-    } catch (error) {
-        console.error("Error:", error);
-    }
+        for (let meter = 0; meter < datosPrueba.length; meter++)
+            automata.procesarCaracter(datosPrueba[meter]);
+    } catch (error) {console.error("Error:", error);}
 }
 
-function App() {
-    const [contentMarkdown, setContentMarkdown] = useState('');
-    const editorRef = useRef(null);
-
-    const handleEditorDidMount = (editor, monaco) => {
-        editorRef.current = editor;
-    };
-
-    const handleExtract = () => {
-        const code = editorRef.current.getValue();
-        console.log("Código extraído:\n", code);
-        ejecutarAutomata(code);
-    };
-
-  return (
-    <div>
-      <header>
-
-        <button onClick={handleExtract}>Analizar</button>
-      </header>
-      <section>
-        <Editor
-          height="100vh"
-          theme="vs-dark"
-          defaultLanguage="go"
-          onChange={(value) => setContentMarkdown(value)}
-          onMount={handleEditorDidMount}
-        />
-      </section>
-      <footer>
-
-      </footer>
-    </div>
-    );
-}
-
-export default App;
+ejecutarAutomata();
