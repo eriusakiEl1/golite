@@ -1,6 +1,8 @@
 import { Editor } from '@monaco-editor/react';
 import { useState, useRef } from 'react';
 import { Button, Grid, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Tab, Tabs} from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { green } from '@mui/material/colors';
 
 // Clase Automata
 class Automata {
@@ -97,6 +99,45 @@ async function leerArchivo(ruta) {
     }
     return await response.text();
 }
+function FileUploadButton({ onFileUpload }) {
+    // Manejador para el evento de cambio al seleccionar un archivo
+    const handleFileChange = (event) => {
+        const file = event.target.files[0]; // Obtén el archivo seleccionado
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const fileContent = e.target.result; // Contenido del archivo leído
+                onFileUpload(fileContent); // Pasamos el contenido al componente principal
+            };
+            reader.readAsText(file); // Lee el archivo como texto
+        }
+    };
+
+    return (
+        <div>
+            {/* El botón para subir archivos */}
+            <Button
+                component="label"
+                variant="outlined"
+                sx={{
+                    color: green[500],
+                    borderColor: green[500],
+                    '&:hover': { backgroundColor: green[50] },
+                }}
+            >
+                <AddCircleIcon sx={{ color: green[500], marginRight: 1 }} />
+                Subir archivo
+                <input
+                    type="file"
+                    accept=".txt" // Acepta solo archivos de texto
+                    hidden
+                    onChange={handleFileChange}
+                />
+            </Button>
+        </div>
+    );
+}
+
 
 function App() {
     const [contentMarkdown, setContentMarkdown] = useState('');
@@ -111,6 +152,9 @@ function App() {
 
     const handleEditorDidMount = (editor, monaco) => {
         editorRef.current = editor;
+    };
+    const handleFileUpload = (fileContent) => {
+        setContentMarkdown(fileContent); // Actualiza el contenido del editor con el contenido del archivo
     };
 
     async function ejecutarAutomata(code) {
@@ -173,13 +217,20 @@ function App() {
         setTabIndex(newIndex);
     };
 
-
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#3f555d', color: '#fff' }}>
             {/* Header */}
             <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', backgroundColor: '#2c4343', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-                <img src='/logo-tec.png' alt='logo tecnm en celaya' width='200' />
+                <div style={{ backgroundColor: '#8bb3bf', padding: '10px', display: 'inline-block', borderRadius: '8px' }}>
+                    <img src="/logo-tec.png" alt="logo tecnm en Celaya" width="200" />
+                </div>    
+
                 <div>
+                {/* El botón para subir archivos */}
+                    <FileUploadButton onFileUpload={handleFileUpload} />
+                </div>            
+                <div>
+
                     <Button variant="contained" color="primary" onClick={handleLexico} style={{ marginRight: '10px' }}>
                         Análisis Léxico
                     </Button>
@@ -199,12 +250,12 @@ function App() {
                 <Grid item xs={12} md={8}>
                     <Box sx={{ padding: 2 }}>
                         <Editor
-                            height="60vh"  // Ajuste de tamaño
-                            theme="vs-dark"  // Modo oscuro
+                            height="60vh"
+                            theme="vs-dark"
                             defaultLanguage="go"
                             onChange={(value) => setContentMarkdown(value)}
                             onMount={handleEditorDidMount}
-                            value='//Hello, Welcome to GoLite'
+                            value={contentMarkdown} 
                         />
                     </Box>
                 </Grid>
