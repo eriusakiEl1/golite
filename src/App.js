@@ -1,6 +1,6 @@
 import { Editor } from '@monaco-editor/react';
 import { useState, useRef } from 'react';
-import { Button, Grid, Box, Typography } from '@mui/material';
+import { Button, Grid, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Tab, Tabs} from '@mui/material';
 
 // Clase Automata
 class Automata {
@@ -104,6 +104,11 @@ function App() {
     const [resultado, setResultado] = useState(''); // Estado para el resultado
     const editorRef = useRef(null);
 
+    const [tabIndex, setTabIndex] = useState(0); // Estado para manejar las pestañas
+
+    {/* Tabla de símbolos */}
+    const [symbolTable, setSymbolTable] = useState([]);
+
     const handleEditorDidMount = (editor, monaco) => {
         editorRef.current = editor;
     };
@@ -164,10 +169,16 @@ function App() {
         setResultado("");
     };
 
+    const handleTabChange = (event, newIndex) => {
+        setTabIndex(newIndex);
+    };
+
+
     return (
-        <div>
-            <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px' }}>
-                <img src='/logo-tec.png' alt='logo tecnm en celaya' width='300' />
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#3f555d', color: '#fff' }}>
+            {/* Header */}
+            <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', backgroundColor: '#2c4343', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+                <img src='/logo-tec.png' alt='logo tecnm en celaya' width='200' />
                 <div>
                     <Button variant="contained" color="primary" onClick={handleLexico} style={{ marginRight: '10px' }}>
                         Análisis Léxico
@@ -182,12 +193,14 @@ function App() {
                 <img src='/logo-tec2.png' alt='logo tecnm en celaya' width='100' />
             </header>
 
-            <Grid container>
+            {/* Main Content */}
+            <Grid container spacing={3} sx={{ flex: 1 }}>
+                {/* Editor */}
                 <Grid item xs={12} md={8}>
                     <Box sx={{ padding: 2 }}>
                         <Editor
-                            height="80vh"
-                            theme="vs-light"
+                            height="60vh"  // Ajuste de tamaño
+                            theme="vs-dark"  // Modo oscuro
                             defaultLanguage="go"
                             onChange={(value) => setContentMarkdown(value)}
                             onMount={handleEditorDidMount}
@@ -195,86 +208,96 @@ function App() {
                         />
                     </Box>
                 </Grid>
+
+                {/* Symbol Table */}
                 <Grid item xs={12} md={4}>
-                    <Box
-                        sx={{
-                            backgroundColor: 'primary.light',
-                            color: 'white',
-                            padding: 2,
-                            height: '80vh',
-                            borderRadius: 1,
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <Typography variant="h6" sx={{ marginBottom: 2 }}>
-                            Resultado
-                        </Typography>
-                        <Box
-                            id="Resultado"
-                            sx={{
-                                flex: 1,
-                                backgroundColor: '#ffffff',
-                                color: '#000000',
-                                borderRadius: 1,
-                                padding: 2,
-                                overflowY: 'auto',
-                                height: '100%',
-                                whiteSpace: 'pre-wrap',
-                                wordWrap: 'break-word',
-                                boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
-                            }}
-                        >
-                            <pre>{resultado || "No se ha generado ningún resultado aún."}</pre>
-                        </Box>
-                        <Button
-                            variant="outlined"
-                            color="secondary"
-                            onClick={clearErrors}
-                            sx={{ marginTop: 2 }}
-                        >
-                            Limpiar Resultado
-                        </Button>
+                    <Box sx={{ backgroundColor: '#4a646a', color: 'white', padding: 2, height: '80vh', borderRadius: 1 }}>
+                        <Typography variant="h6" sx={{ marginBottom: 2 }}>Tabla de Símbolos</Typography>
+                        <TableContainer component={Paper} sx={{ backgroundColor: '#3f555d', color: 'white' }}>
+                            <Table sx={{ minWidth: 650 }} aria-label="symbol table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ color: '#fff' }}><strong>Nombre</strong></TableCell>
+                                        <TableCell sx={{ color: '#fff' }}><strong>Tipo de Token</strong></TableCell>
+                                        <TableCell sx={{ color: '#fff' }}><strong>Tipo de Símbolo</strong></TableCell>
+                                        <TableCell sx={{ color: '#fff' }}><strong>Tipo de Dato</strong></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {symbolTable.map((row, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell>{row.token}</TableCell>
+                                            <TableCell>{row.type}</TableCell>
+                                            <TableCell>{row.description}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Box>
                 </Grid>
             </Grid>
 
-            <footer style={{ backgroundColor: '#f4f4f4', padding: '10px', borderTop: '1px solid #ccc' }}>
-                <Typography variant="h6">Errores Detectados</Typography>
-                <Box
-                    sx={{
-                        maxHeight: '150px',
-                        overflowY: 'auto',
-                        backgroundColor: '#fff',
-                        padding: 2,
-                        borderRadius: 1,
-                        boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
-                    }}
-                >
-                    {errors.length === 0 ? (
-                        <Typography variant="body1" color="textSecondary">
-                            No se han detectado errores.
-                        </Typography>
-                    ) : (
-                        <ul>
-                            {errors.map((error, index) => (
-                                <li key={index}>
-                                    <Typography variant="body2" color="error">
-                                        <strong>{error.type}:</strong> {error.message}
+            {/* Footer */}
+            <footer style={{
+                backgroundColor: '#2c4343',
+                padding: '20px',
+                borderTop: '1px solid #ccc',
+                position: 'relative',
+                width: '100%',
+                bottom: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                zIndex: 10,
+                color: '#fff'
+            }}>
+                <Grid container spacing={2} sx={{ width: '100%' }}>
+                    <Grid item xs={12}>
+                        <Box sx={{
+                            padding: 2,
+                            borderRadius: 1,
+                            backgroundColor: '#4a646a', // Fondo gris oscuro
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // Sombra suave
+                            width: '100%' // Asegura que ocupe todo el ancho
+                        }}>
+                            <Tabs value={tabIndex} onChange={handleTabChange} aria-label="result and error tabs" variant="fullWidth">
+                                <Tab label="Resultado" />
+                                <Tab label="Errores" />
+                            </Tabs>
+
+                            {tabIndex === 0 && (
+                                <Box sx={{ backgroundColor: '#2c4343', color: '#fff', borderRadius: 1, padding: 2, overflowY: 'auto' }}>
+                                    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                                        {resultado || "No se ha generado ningún resultado aún."}
                                     </Typography>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </Box>
-                <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={clearErrors}
-                    sx={{ marginTop: 1 }}
-                >
-                    Limpiar Errores
-                </Button>
+                                </Box>
+                            )}
+
+                            {tabIndex === 1 && (
+                                <Box sx={{ backgroundColor: '#2c4343', color: '#fff', borderRadius: 1, padding: 2, overflowY: 'auto' }}>
+                                    {errors.length === 0 ? (
+                                        <Typography variant="body1" color="textSecondary">No se han detectado errores.</Typography>
+                                    ) : (
+                                        <ul>
+                                            {errors.map((error, index) => (
+                                                <li key={index}>
+                                                    <Typography variant="body2" color="error">
+                                                        <strong>{error.type}:</strong> {error.message}
+                                                    </Typography>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </Box>
+                            )}
+
+                            <Button variant="outlined" color="secondary" onClick={clearErrors} sx={{ marginTop: 2 }}>
+                                Limpiar
+                            </Button>
+                        </Box>
+                    </Grid>
+                </Grid>
             </footer>
         </div>
     );
