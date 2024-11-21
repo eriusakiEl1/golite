@@ -1,5 +1,6 @@
 import { Editor } from '@monaco-editor/react';
 import { useState, useRef } from 'react';
+import QuantumFlare from './components/components.js';
 import { Modal, IconButton, Button, Grid, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Tab, Tabs} from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import InfoIcon from '@mui/icons-material/Info';
@@ -92,14 +93,15 @@ class Automata {
     }
 }
 
-// Función para cargar datos desde un recurso estático
-async function leerArchivo(ruta) {
+// Función para cargar los datos de la matriz
+async function leerMatriz(ruta) {
     const response = await fetch(ruta);
     if (!response.ok) {
         throw new Error(`Error al cargar el archivo: ${ruta}`);
     }
     return await response.text();
 }
+
 function FileUploadButton({ onFileUpload }) {
     // Manejador para el evento de cambio al seleccionar un archivo
     const handleFileChange = (event) => {
@@ -171,7 +173,7 @@ function App() {
 
     async function ejecutarAutomata(code) {
         try {
-            const datosMatriz = await leerArchivo('/matriz.txt');
+            const datosMatriz = await leerMatriz('/matriz.txt');
             const lineas = datosMatriz.split('\n');
             const matriz = lineas.map(linea => linea.split('\t').map(Number));
 
@@ -219,7 +221,8 @@ function App() {
         const code = editorRef.current.getValue();
         ejecutarAutomata(code);
         setIsLexicoDone(true); // Habilitar el botón de análisis sintáctico
-
+        const generatedTable = generateSymbolTable(code); // Generar la tabla de símbolos
+        setSymbolTable(generatedTable);
     };
 
     const clearErrors = () => {
@@ -443,18 +446,19 @@ const handleSemantico = () => {
                             <Table sx={{ minWidth: 650 }} aria-label="symbol table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ color: '#fff' }}><strong>Nombre</strong></TableCell>
                                         <TableCell sx={{ color: '#fff' }}><strong>Tipo de Token</strong></TableCell>
+                                        <TableCell sx={{ color: '#fff' }}><strong>Lexema</strong></TableCell>
                                         <TableCell sx={{ color: '#fff' }}><strong>Tipo de Símbolo</strong></TableCell>
-                                        <TableCell sx={{ color: '#fff' }}><strong>Tipo de Dato</strong></TableCell>
+                                        <TableCell sx={{ color: '#fff' }}><strong>Posición</strong></TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {symbolTable.map((row, index) => (
                                         <TableRow key={index}>
-                                            <TableCell>{row.token}</TableCell>
-                                            <TableCell>{row.type}</TableCell>
-                                            <TableCell>{row.description}</TableCell>
+                                            <TableCell>{row.Componente}</TableCell>
+                                            <TableCell>{row.Lexema}</TableCell>
+                                            <TableCell>{row.Tipo}</TableCell>
+                                            <TableCell>{row.Posicion}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -528,5 +532,31 @@ const handleSemantico = () => {
         </div>
     );
 }
-
+function generateSymbolTable(code) {
+    try {
+      const tokens = QuantumFlare.construct(code);
+      const validTokens = tokens.filter(token => token !== null);
+  
+      // Formatear los datos para la tabla
+      return validTokens.map(token => ({
+        Componente: token.Componente,
+        Lexema: token.Lexema,
+        Tipo: token.Tipo || "-", // Algunos tokens no tienen "Tipo"
+        Posicion: `[${token.Posicion.start.line}, ${token.Posicion.start.column}]`
+      }));
+    } catch (error) {
+      console.error("Error durante el análisis:", error.message);
+      return [];
+    }
+  }
+  const exampleCode = `
+    var x: int;
+    if (x == 5) {
+      x = x + 1;
+    }
+  `;
+  
+  const symbolTable = generateSymbolTable(exampleCode);
+  console.log(symbolTable);
+  
 export default App;
