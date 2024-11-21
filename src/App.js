@@ -455,7 +455,7 @@ const handleSemantico = () => {
                                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
                             }}>
                         <Typography variant="h6" sx={{ marginBottom: 2 }}>Tabla de Símbolos</Typography>
-                        <TableContainer component={Paper} sx={{ backgroundColor: '#3f555d', color: 'white' }}>
+                        <TableContainer component={Paper} sx={{ backgroundColor: '#3f555d', color: 'white', maxHeight: 350, overflowY: 'auto'}}>
                             <Table sx={{ minWidth: 650}} aria-label="symbol table">
                                 <TableHead>
                                     <TableRow>
