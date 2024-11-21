@@ -440,10 +440,23 @@ const handleSemantico = () => {
 
                 {/* Symbol Table */}
                 <Grid item xs={12} md={4}>
-                    <Box sx={{ backgroundColor: '#4a646a', color: 'white', padding: 2, height: '80vh', borderRadius: 1 }}>
+                    <Box
+                        id="Resultado"
+                        sx={{
+                                flex: 1,
+                                backgroundColor: '#ffffff',
+                                color: '#000000',
+                                borderRadius: 1,
+                                padding: 2,
+                                overflowY: 'auto',
+                                height: '100%',
+                                whiteSpace: 'pre-wrap',
+                                wordWrap: 'break-word',
+                                boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+                            }}>
                         <Typography variant="h6" sx={{ marginBottom: 2 }}>Tabla de Símbolos</Typography>
                         <TableContainer component={Paper} sx={{ backgroundColor: '#3f555d', color: 'white' }}>
-                            <Table sx={{ minWidth: 650 }} aria-label="symbol table">
+                            <Table sx={{ minWidth: 650}} aria-label="symbol table">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={{ color: '#fff' }}><strong>Tipo de Token</strong></TableCell>
@@ -455,10 +468,10 @@ const handleSemantico = () => {
                                 <TableBody>
                                     {symbolTable.map((row, index) => (
                                         <TableRow key={index}>
-                                            <TableCell>{row.Componente}</TableCell>
-                                            <TableCell>{row.Lexema}</TableCell>
-                                            <TableCell>{row.Tipo}</TableCell>
-                                            <TableCell>{row.Posicion}</TableCell>
+                                            <TableCell sx={{ color: '#fff' }}>{row.Componente}</TableCell>
+                                            <TableCell sx={{ color: '#fff' }}>{row.Lexema}</TableCell>
+                                            <TableCell sx={{ color: '#fff' }}>{row.Tipo}</TableCell>
+                                            <TableCell sx={{ color: '#fff' }}>{row.Posicion}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
