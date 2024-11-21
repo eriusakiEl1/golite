@@ -1,7 +1,8 @@
 import { Editor } from '@monaco-editor/react';
 import { useState, useRef } from 'react';
-import { Button, Grid, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Tab, Tabs} from '@mui/material';
+import { Modal, IconButton, Button, Grid, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Tab, Tabs} from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import InfoIcon from '@mui/icons-material/Info';
 import { green } from '@mui/material/colors';
 
 // Clase Automata
@@ -140,6 +141,7 @@ function FileUploadButton({ onFileUpload }) {
 
 
 function App() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [contentMarkdown, setContentMarkdown] = useState('');
     const [errors, setErrors] = useState([]); // Lista de errores
     const [resultado, setResultado] = useState(''); // Estado para el resultado
@@ -155,6 +157,14 @@ function App() {
     };
     const handleFileUpload = (fileContent) => {
         setContentMarkdown(fileContent); // Actualiza el contenido del editor con el contenido del archivo
+    };
+
+    {/* Modal */}
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
     };
 
     async function ejecutarAutomata(code) {
@@ -240,10 +250,54 @@ function App() {
                     <Button variant="contained" color="success">
                         Análisis Semántico
                     </Button>
+                    <IconButton onClick={handleOpenModal} style={{ color: '#fff' }}>
+                        <InfoIcon />
+                    </IconButton>
                 </div>
                 <img src='/logo-tec2.png' alt='logo tecnm en celaya' width='100' />
             </header>
-
+            {/* Modal para información de los integrantes */}
+            <Modal open={isModalOpen} onClose={handleCloseModal}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 400,
+                        bgcolor: '#5a7a84',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                        borderRadius: 2,
+                        color: '#fff',
+                    }}
+                >
+                    <Typography variant="h6" component="h2" gutterBottom>
+                        Fundadores de GoLite
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        - Andrade Ramírez Roberto Carlos
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        - Moya Zamarripa Lalo
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        - Ruelas Aguirre Dylan
+                    </Typography>
+                    <Typography variant="body1">
+                        - Urbina Zarate Sergio
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleCloseModal}
+                        sx={{ mt: 2 }}
+                    >
+                        Cerrar
+                    </Button>
+                </Box>
+            </Modal>
             {/* Main Content */}
             <Grid container spacing={3} sx={{ flex: 1 }}>
                 {/* Editor */}
