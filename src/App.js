@@ -549,14 +549,5 @@ function generateSymbolTable(code) {
       return [];
     }
   }
-  const exampleCode = `
-    var x: int;
-    if (x == 5) {
-      x = x + 1;
-    }
-  `;
-  
-  const symbolTable = generateSymbolTable(exampleCode);
-  console.log(symbolTable);
   
 export default App;
