@@ -146,6 +146,8 @@ function App() {
     const [errors, setErrors] = useState([]); // Lista de errores
     const [resultado, setResultado] = useState(''); // Estado para el resultado
     const editorRef = useRef(null);
+    const [isLexicoDone, setIsLexicoDone] = useState(false); // Estado para habilitar análisis sintáctico
+    const [isSintacticoDone, setIsSintacticoDone] = useState(false); // Estado para habilitar análisis semántico
 
     const [tabIndex, setTabIndex] = useState(0); // Estado para manejar las pestañas
 
@@ -216,6 +218,8 @@ function App() {
     const handleLexico = () => {
         const code = editorRef.current.getValue();
         ejecutarAutomata(code);
+        setIsLexicoDone(true); // Habilitar el botón de análisis sintáctico
+
     };
 
     const clearErrors = () => {
@@ -227,6 +231,19 @@ function App() {
         setTabIndex(newIndex);
     };
 
+    {/*Botones */}
+
+
+const handleSintactico = () => {
+    // Lógica del análisis sintáctico
+    console.log("Análisis Sintáctico realizado");
+    setIsSintacticoDone(true); // Habilitar el botón de análisis semántico
+};
+
+const handleSemantico = () => {
+    // Lógica del análisis semántico
+    console.log("Análisis Semántico realizado");
+};
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#3f555d', color: '#fff' }}>
             {/* Header */}
@@ -241,15 +258,31 @@ function App() {
                 </div>            
                 <div>
 
-                    <Button variant="contained" color="primary" onClick={handleLexico} style={{ marginRight: '10px' }}>
-                        Análisis Léxico
-                    </Button>
-                    <Button variant="contained" color="secondary" style={{ marginRight: '10px' }}>
-                        Análisis Sintáctico
-                    </Button>
-                    <Button variant="contained" color="success">
-                        Análisis Semántico
-                    </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleLexico}
+                    style={{ marginRight: '10px' }}
+                >
+                    Análisis Léxico
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleSintactico}
+                    disabled={!isLexicoDone} // Deshabilitado hasta que se haga clic en Análisis Léxico
+                    style={{ marginRight: '10px' }}
+                >
+                    Análisis Sintáctico
+                </Button>
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleSemantico}
+                    disabled={!isSintacticoDone} // Deshabilitado hasta que se haga clic en Análisis Sintáctico
+                >
+                    Análisis Semántico
+                </Button>
                     <IconButton onClick={handleOpenModal} style={{ color: '#fff' }}>
                         <InfoIcon />
                     </IconButton>
@@ -276,18 +309,106 @@ function App() {
                     <Typography variant="h6" component="h2" gutterBottom>
                         Fundadores de GoLite
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        - Andrade Ramírez Roberto Carlos
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        - Moya Zamarripa Lalo
-                    </Typography>
-                    <Typography variant="body1" gutterBottom>
-                        - Ruelas Aguirre Dylan
-                    </Typography>
-                    <Typography variant="body1">
-                        - Urbina Zarate Sergio
-                    </Typography>
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                            <Box
+                                sx={{
+                                    width: 50,
+                                    height: 50,
+                                    overflow: 'hidden',
+                                    borderRadius: '50%',
+                                    border: '2px solid #fff',
+                                }}
+                            >
+                                <img
+                                    src="/img_integrantes/robert.jpeg"
+                                    alt="Andrade Ramírez Roberto Carlos"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1" gutterBottom>
+                                Andrade Ramírez Roberto Carlos
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                            <Box
+                                sx={{
+                                    width: 50,
+                                    height: 50,
+                                    overflow: 'hidden',
+                                    borderRadius: '50%',
+                                    border: '2px solid #fff',
+                                }}
+                            >
+                                <img
+                                    src="/img_integrantes/lalo.jpeg"
+                                    alt="Moya Zamarripa Lalo"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1" gutterBottom>
+                                Moya Zamarripa Lalo
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                            <Box
+                                sx={{
+                                    width: 50,
+                                    height: 50,
+                                    overflow: 'hidden',
+                                    borderRadius: '50%',
+                                    border: '2px solid #fff',
+                                }}
+                            >
+                                <img
+                                    src="/img_integrantes/dylan.jpeg"
+                                    alt="Ruelas Aguirre Dylan"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1" gutterBottom>
+                                Ruelas Aguirre Dylan
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                            <Box
+                                sx={{
+                                    width: 50,
+                                    height: 50,
+                                    overflow: 'hidden',
+                                    borderRadius: '50%',
+                                    border: '2px solid #fff',
+                                }}
+                            >
+                                <img
+                                    src="/img_integrantes/sergio.jpeg"
+                                    alt="Urbina Zarate Sergio"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1" gutterBottom>
+                                Urbina Zarate Sergio
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
                     <Button
                         variant="contained"
                         color="primary"
